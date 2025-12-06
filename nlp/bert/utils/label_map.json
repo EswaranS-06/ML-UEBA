@@ -1,0 +1,13 @@
+{
+  "0": "O",
+  "1": "B-USER",
+  "2": "I-USER",
+  "3": "B-SRC_IP",
+  "4": "I-SRC_IP",
+  "5": "B-HOST",
+  "6": "I-HOST",
+  "7": "B-PROCESS",
+  "8": "I-PROCESS",
+  "9": "B-ACTION",
+  "10": "I-ACTION"
+}

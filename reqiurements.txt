@@ -1,0 +1,8 @@
+scikit-learn
+pandas
+yaml
+datatime
+#for cpu usage
+torch --index-url https://download.pytorch.org/whl/cpu
+transformers
+sentence_transformers

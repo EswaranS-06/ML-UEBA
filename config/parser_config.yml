@@ -1,0 +1,38 @@
+parsers:
+  syslog:
+    triggers:
+      - type: regex
+        pattern: "^[A-Z][a-z]{2}\\s+\\d+\\s+\\d{2}:\\d{2}:\\d{2}"
+
+  windows:
+    triggers:
+      - type: dict_keys
+        keys:
+          - "EventID"
+          - "ComputerName"
+
+  cloudtrail:
+    triggers:
+      - type: dict_keys
+        keys:
+          - "eventTime"
+          - "eventName"
+
+  network:
+    triggers:
+      - type: regex
+        pattern: "\\b(src|dst|source_ip|dest_ip|sport|dport|proto|bytes)\\b"
+
+      - type: regex
+        pattern: "\\bIN=|OUT=|PROTO=|SPT=|DPT=|SRC=|DST=\\b"
+
+      - type: dict_keys
+        keys:
+          - source_ip
+
+      - type: dict_keys
+        keys:
+          - src
+          - dst
+
+default_parser: syslog

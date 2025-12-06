@@ -1,0 +1,14 @@
+[project]
+name = "ml-ueba"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10,<3.11"
+dependencies = [
+    "accelerate>=1.12.0",
+    "numpy>=2.2.6",
+    "pandas>=2.3.3",
+    "scikit-learn>=1.7.2",
+    "sentence-transformers>=5.1.2",
+    "transformers>=4.57.3",
+]
