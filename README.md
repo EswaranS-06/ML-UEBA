@@ -144,6 +144,8 @@ uv venv
 Activate automatically:
 
 ```powershell
+uv venv --python 3.10
+
 uv run python --version
 ```
 
@@ -217,24 +219,6 @@ Each major folder contains its own README:
 * `features/README.md`
 * `nlp/embeddings/README.md`
 * `config/README.md`
-
----
-
-# 🤝 Contributing
-
-Contributions are welcome!
-You can extend:
-
-* new log parsers
-* new feature encoders
-* new NER modules
-* new anomaly detection models
-
----
-
-# 📄 License
-
-Apache 2.0 (recommended — add if you want)
 
 ---
 
