@@ -6,9 +6,11 @@ readme = "README.md"
 requires-python = ">=3.10,<3.11"
 dependencies = [
     "accelerate>=1.12.0",
+    "huggingface-hub>=0.36.0",
     "numpy>=2.2.6",
     "pandas>=2.3.3",
     "scikit-learn>=1.7.2",
     "sentence-transformers>=5.1.2",
     "transformers>=4.57.3",
+    "typer>=0.20.0",
 ]
