@@ -9,9 +9,13 @@ sys.path.insert(0, PROJECT_ROOT)
 from preprocess.preprocess_pipeline import PreprocessPipeline
 from nlp.nlp_pipeline import NLPPipeline   # <-- NEW
 from features.feature_pipeline import FeaturePipeline
+from ml.ml_pipeline import MLPipeline
 
 
-RAW_PATH = "data/raw/sample.log"
+
+
+RAW_PATH = "data/raw/sample.log" 
+# RAW_PATH = "data/raw/auth-anomaly.txt" 
 PROCESSED_PATH = "data/processed/sample.csv"
 
 
@@ -35,24 +39,32 @@ def save_processed(df):
 def main():
     logs = load_raw_logs()
 
-    pipeline = PreprocessPipeline()
-    nlp = NLPPipeline()   # <-- NLP Block Created
+    preprocess = PreprocessPipeline()
+    nlp = NLPPipeline()   # <-- NLP Block Created    
     features = FeaturePipeline(verbose=True)
+    ml = MLPipeline()
 
     print("\n[+] Parsing and normalizing logs...\n")
 
     start = time.time()
 
     # PREPROCESS (parser + normalizer)
-    df = pipeline.run(logs)
+    df = preprocess.run(logs)
 
     # NLP ENRICHMENT (regex-based NER, no LLM)
     print("[+] Running NLP entity extraction (regex + rules)...")
     df, embed = nlp.run(df)
-    
+    # Save embeddings for ML training
+    #os.makedirs("data/processed", exist_ok=True)
+    #import numpy as np
+    #np.save("data/processed/sample_msg_emb.npy", embed)
+    #print("[+] Message embeddings saved to data/processed/sample_msg_emb.npy")
+
     #Featuring 
     print("[+] Computing features...")
     df = features.run(df)
+
+    df = ml.run(df, embed)
 
     end = time.time()
 
