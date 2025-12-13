@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML-UEBA Control Plane</title>
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Google Fonts for Premium Feel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>ML-UEBA</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-target="input-panel">
+                    <span class="icon">▶</span> Input
+                </button>
+                <button class="nav-item" data-target="pipeline-panel">
+                    <span class="icon">▶</span> Pipeline
+                </button>
+                <button class="nav-item" data-target="output-panel">
+                    <span class="icon">▶</span> Output
+                </button>
+                <button class="nav-item" data-target="database-panel">
+                    <span class="icon">▶</span> Database
+                </button>
+                <button class="nav-item" data-target="run-panel">
+                    <span class="icon">▶</span> Run / Status
+                </button>
+                <button class="nav-item" data-target="logs-panel">
+                    <span class="icon">▶</span> Logs
+                </button>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <!-- INPUT PANEL -->
+            <section id="input-panel" class="panel active">
+                <header class="panel-header">
+                    <h1>Input Configuration</h1>
+                    <p class="subtitle">Configure the data source for the pipeline.</p>
+                </header>
+                <div class="panel-body">
+                    <div class="card">
+                        <div class="form-group">
+                            <label>Input Type</label>
+                            <select id="input-type-select" class="form-control">
+                                <option value="file">File</option>
+                                <option value="kafka">Kafka</option>
+                                <option value="http">HTTP</option>
+                            </select>
+                        </div>
+
+                        <!-- File Config -->
+                        <div id="config-file" class="config-section active">
+                            <div class="form-group">
+                                <label>Upload Logs (.log, .txt)</label>
+                                <div class="file-upload-wrapper">
+                                    <input type="file" id="file-upload-input" class="file-input-hidden" multiple
+                                        accept=".log,.txt">
+                                    <label for="file-upload-input" class="file-upload-btn">
+                                        <span class="icon">📂</span> Choose Files...
+                                    </label>
+                                    <div id="file-chosen-list" class="file-list-display">No files chosen</div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Kafka Config -->
+                        <div id="config-kafka" class="config-section">
+                            <div class="form-group">
+                                <label>Bootstrap Servers</label>
+                                <input type="text" class="form-control" value="localhost:9092">
+                            </div>
+                            <div class="form-group">
+                                <label>Topic</label>
+                                <input type="text" class="form-control" value="auth-logs">
+                            </div>
+                            <div class="form-group">
+                                <label>Group ID</label>
+                                <input type="text" class="form-control" value="ueba-consumer">
+                            </div>
+                        </div>
+
+                        <!-- HTTP Config -->
+                        <div id="config-http" class="config-section">
+                            <div class="form-group">
+                                <label>Listen Port</label>
+                                <input type="number" class="form-control" value="8080">
+                            </div>
+                            <div class="form-group">
+                                <label>Auth Token</label>
+                                <input type="password" class="form-control" value="********">
+                            </div>
+                        </div>
+
+                        <div class="card-actions">
+                            <button class="btn btn-primary" onclick="saveConfig('input')">Save Input
+                                Configuration</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PIPELINE PANEL -->
+            <section id="pipeline-panel" class="panel">
+                <header class="panel-header">
+                    <h1>Pipeline Configuration</h1>
+                    <p class="subtitle">Enable or disable processing steps.</p>
+                </header>
+                <div class="panel-body">
+                    <div class="card">
+                        <h3>General Processing</h3>
+                        <div class="checkbox-list">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="check-preprocessing" checked>
+                                <span class="checkmark"></span> Preprocessing
+                            </label>
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="check-parsing" checked>
+                                <span class="checkmark"></span> Parsing & Normalization
+                            </label>
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="check-feature-eng" checked>
+                                <span class="checkmark"></span> Feature Engineering
+                            </label>
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <h3>NLP</h3>
+                        <div class="checkbox-list">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="check-nlp-username" checked>
+                                <span class="checkmark"></span> Username Recovery
+                            </label>
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="check-nlp-regex" checked>
+                                <span class="checkmark"></span> Regex-based Entity Enrichment
+                            </label>
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="check-nlp-embed" checked>
+                                <span class="checkmark"></span> Message Embeddings (MiniLM)
+                            </label>
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <h3>ML Models</h3>
+                        <div class="checkbox-list">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="check-ml-if" checked>
+                                <span class="checkmark"></span> Isolation Forest
+                            </label>
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="check-ml-lstm" checked>
+                                <span class="checkmark"></span> LSTM Autoencoder
+                            </label>
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <h3>Drift Detection</h3>
+                        <div class="checkbox-list">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="check-drift-ph" checked>
+                                <span class="checkmark"></span> Page-Hinkley
+                            </label>
+                        </div>
+
+                        <div class="card-actions">
+                            <button class="btn btn-primary" onclick="saveConfig('pipeline')">Save Pipeline
+                                Configuration</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- OUTPUT PANEL -->
+            <section id="output-panel" class="panel">
+                <header class="panel-header">
+                    <h1>Output Configuration</h1>
+                    <p class="subtitle">Manage data destinations.</p>
+                </header>
+                <div class="panel-body">
+                    <div class="card">
+                        <h3>Storage (Always On)</h3>
+                        <div class="status-item connected">
+                            <span class="status-dot"></span>
+                            <div>
+                                <strong>PostgreSQL (Primary Storage)</strong>
+                                <div class="text-muted">Status: Connected</div>
+                            </div>
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <h3>Additional Outputs</h3>
+                        <div class="output-option">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="check-file-output">
+                                <span class="checkmark"></span> File Download (Processed)
+                            </label>
+                            <div class="sub-config" id="sub-file-output">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Format</label>
+                                        <select class="form-control">
+                                            <option>CSV</option>
+                                            <option>JSON</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group flex-grow">
+                                        <label>Action</label>
+                                        <button class="btn btn-secondary full-width"
+                                            onclick="alert('Download started (Simulated)')">
+                                            ⬇ Download Processed Data
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="output-option">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="check-kafka-output">
+                                <span class="checkmark"></span> Kafka Output
+                            </label>
+                            <div class="sub-config" id="sub-kafka-output">
+                                <div class="form-group">
+                                    <label>Topic</label>
+                                    <input type="text" class="form-control" value="ueba-anomalies">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="output-option">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="check-elastic-output">
+                                <span class="checkmark"></span> Elasticsearch
+                            </label>
+                            <div class="sub-config" id="sub-elastic-output">
+                                <div class="form-group">
+                                    <label>Index</label>
+                                    <input type="text" class="form-control" value="ueba-events">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="output-option">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="check-webhook-output">
+                                <span class="checkmark"></span> Webhook
+                            </label>
+                            <div class="sub-config" id="sub-webhook-output">
+                                <div class="form-group">
+                                    <label>URL</label>
+                                    <input type="text" class="form-control" value="https://example/api">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="info-box">
+                            <strong>Note:</strong> ML output is ALWAYS stored in PostgreSQL. Selected outputs receive a
+                            COPY.
+                        </div>
+
+                        <div class="card-actions">
+                            <button class="btn btn-primary" onclick="saveConfig('output')">Save Output
+                                Configuration</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- DATABASE PANEL -->
+            <section id="database-panel" class="panel">
+                <header class="panel-header">
+                    <h1>Database Status</h1>
+                    <p class="subtitle">Monitor PostgreSQL storage stats.</p>
+                </header>
+                <div class="panel-body">
+                    <div class="card">
+                        <h3>PostgreSQL</h3>
+                        <div class="kv-grid">
+                            <div class="kv-item"><span class="key">Status:</span> <span id="db-status"
+                                    class="value">Checking...</span></div>
+                            <div class="kv-item"><span class="key">Host:</span> <span id="db-host"
+                                    class="value">postgres:5432</span>
+                            </div>
+                            <div class="kv-item"><span class="key">Database:</span> <span id="db-name"
+                                    class="value">ueba</span>
+                            </div>
+                            <div class="kv-item"><span class="key">User:</span> <span id="db-user"
+                                    class="value">ueba</span></div>
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <h3>Tables</h3>
+                        <div class="kv-grid">
+                            <div class="kv-item"><span class="key">events:</span> <span id="db-count-events"
+                                    class="value">1,234,556
+                                    rows</span></div>
+                            <div class="kv-item"><span class="key">entity_risk:</span> <span id="db-count-risk"
+                                    class="value">12,433
+                                    rows</span></div>
+                        </div>
+                        <br>
+                        <div class="kv-item"><span class="key">Last Insert:</span> <span id="db-last-insert"
+                                class="value mono">2025-11-30
+                                05:27:06 UTC</span></div>
+
+                        <div class="divider"></div>
+
+                        <h3>Grafana</h3>
+                        <div class="kv-grid">
+                            <div class="kv-item"><span class="key">URL:</span> <a href="#"
+                                    class="value-link">http://localhost:3000</a></div>
+                            <div class="kv-item"><span class="key">Status:</span> <span id="grafana-status"
+                                    class="value">Checking...</span></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RUN/STATUS PANEL -->
+            <section id="run-panel" class="panel">
+                <header class="panel-header">
+                    <h1>Pipeline Status</h1>
+                    <p class="subtitle">Control execution and view real-time metrics.</p>
+                </header>
+                <div class="panel-body">
+                    <div class="card text-center">
+                        <div id="pipeline-status" class="status-big">STOPPED</div>
+
+                        <div class="metrics-grid">
+                            <div class="metric-card">
+                                <div id="metric-logs-sec" class="metric-val">0</div>
+                                <div class="metric-label">Logs/sec</div>
+                            </div>
+                            <div class="metric-card">
+                                <div id="metric-events-processed" class="metric-val">0</div>
+                                <div class="metric-label">Events Processed</div>
+                            </div>
+                            <div class="metric-card">
+                                <div id="metric-anomalies" class="metric-val">0</div>
+                                <div class="metric-label">Anomalies</div>
+                            </div>
+                            <div class="metric-card">
+                                <div id="metric-drift" class="metric-val">NO</div>
+                                <div class="metric-label">Drift Detected</div>
+                            </div>
+                        </div>
+
+                        <div class="control-actions">
+                            <button id="btn-start" class="btn btn-success">▶ Start</button>
+                            <button id="btn-pause" class="btn btn-warning">⏸ Pause</button>
+                            <button id="btn-stop" class="btn btn-danger">⏹ Stop</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LOGS PANEL -->
+            <section id="logs-panel" class="panel">
+                <header class="panel-header">
+                    <h1>System Logs</h1>
+                    <p class="subtitle">Live application logs.</p>
+                </header>
+                <div class="panel-body full-height">
+                    <div class="terminal-window">
+                        <div class="terminal-content" id="log-output">
+                            <div class="log-line info"><span class="ts">[2025-12-13 20:12:01]</span> [INFO] Input reader
+                                started (file)</div>
+                            <div class="log-line info"><span class="ts">[2025-12-13 20:12:02]</span> [INFO] Parsed 41
+                                events</div>
+                            <div class="log-line info"><span class="ts">[2025-12-13 20:12:02]</span> [INFO] IF score
+                                computed</div>
+                            <div class="log-line warn"><span class="ts">[2025-12-13 20:12:05]</span> [WARN] Drift
+                                threshold nearing</div>
+                            <div class="log-line info"><span class="ts">[2025-12-13 20:12:06]</span> [INFO] Saved 41
+                                rows to PostgreSQL</div>
+                        </div>
+                    </div>
+                    <div class="actions-right">
+                        <button class="btn btn-secondary btn-sm"
+                            onclick="document.getElementById('log-output').innerHTML=''">Clear Logs</button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+
+</html>
