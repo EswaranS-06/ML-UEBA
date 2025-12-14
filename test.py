@@ -55,10 +55,10 @@ def main():
     print("[+] Running NLP entity extraction (regex + rules)...")
     df, embed = nlp.run(df)
     # Save embeddings for ML training
-    #os.makedirs("data/processed", exist_ok=True)
-    #import numpy as np
-    #np.save("data/processed/sample_msg_emb.npy", embed)
-    #print("[+] Message embeddings saved to data/processed/sample_msg_emb.npy")
+    # os.makedirs("data/processed", exist_ok=True)
+    # import numpy as np
+    # np.save("data/processed/sample_msg_emb.npy", embed)
+    # print("[+] Message embeddings saved to data/processed/sample_msg_emb.npy")
 
     #Featuring 
     print("[+] Computing features...")

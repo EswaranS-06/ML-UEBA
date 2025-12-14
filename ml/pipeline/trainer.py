@@ -1,3 +1,5 @@
+#  uv run -m ml.pipeline.trainer 
+
 import os
 import numpy as np
 import pandas as pd

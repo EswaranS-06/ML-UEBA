@@ -1,0 +1,61 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: ueba-postgres
+    environment:
+      POSTGRES_DB: ueba
+      POSTGRES_USER: ueba
+      POSTGRES_PASSWORD: ueba
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    container_name: ueba-adminer
+    ports:
+      - "8081:8080"
+    depends_on:
+      - postgres
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: ueba-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - postgres
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ueba-backend
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_HOST: localhost
+      DATABASE_PORT: 5432
+      DATABASE_NAME: ueba
+      DATABASE_USER: ueba
+      DATABASE_PASSWORD: ueba
+    depends_on:
+      - postgres
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ueba-frontend
+    ports:
+      - "5500:5500"
+
+volumes:
+  postgres_data:
+  grafana_data:

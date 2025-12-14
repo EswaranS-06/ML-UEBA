@@ -7,7 +7,6 @@ from ml.models.isolation_forest import IsolationForestModel
 from ml.models.lstm_autoencoder import LSTMAutoencoder
 from ml.models.page_hinkley import PageHinkley
 from ml.utils.scaling import load_scaler, transform
-from ml.config import MODEL_DIR
 
 
 class MLPipeline:
@@ -16,26 +15,44 @@ class MLPipeline:
     """
 
     def __init__(self):
+        # Resolve paths safely (independent of CWD)
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        project_root = os.path.abspath(os.path.join(base_dir, ".."))
+
+        self.model_dir = os.path.join(project_root, "models")
+
         self._load_artifacts()
 
     def _load_artifacts(self):
-        # Load scaler
-        scaler_path = os.path.join(MODEL_DIR, "scaler.joblib")
-        if not os.path.exists(scaler_path):
-            raise FileNotFoundError("Scaler not found. Train ML first.")
-
+        # ---- Scaler ----
+        scaler_path = os.path.join(self.model_dir, "scaler.joblib")
+        if not os.path.isfile(scaler_path):
+            raise FileNotFoundError(
+                f"Scaler not found at:\n{scaler_path}\n"
+                f"Train ML first before running inference."
+            )
         self.scaler = load_scaler(scaler_path)
 
-        # Load Isolation Forest
+        # ---- Isolation Forest ----
+        iforest_path = os.path.join(self.model_dir, "iforest.joblib")
+        if not os.path.isfile(iforest_path):
+            raise FileNotFoundError(f"IForest model not found at {iforest_path}")
+
         self.iforest = IsolationForestModel()
-        self.iforest.load(os.path.join(MODEL_DIR, "iforest.joblib"))
+        self.iforest.load(iforest_path)
 
-        # Load LSTM Autoencoder
+        # ---- LSTM Autoencoder ----
+        lstm_path = os.path.join(self.model_dir, "lstm_ae.joblib")
+        if not os.path.isfile(lstm_path):
+            raise FileNotFoundError(f"LSTM-AE model not found at {lstm_path}")
+
         self.lstm = LSTMAutoencoder()
-        self.lstm.load(os.path.join(MODEL_DIR, "lstm_ae.joblib"))
+        self.lstm.load(lstm_path)
 
-        # Page-Hinkley drift detector (stateful)
+        # ---- Drift Detector ----
         self.drift = PageHinkley()
+
+        print("[+] ML artifacts loaded successfully")
 
     def run(self, df: pd.DataFrame, embeddings: np.ndarray) -> pd.DataFrame:
         if df.empty:
@@ -47,24 +64,22 @@ class MLPipeline:
         # 2. Scaling
         X = transform(self.scaler, X)
 
-        # 3. Score models
+        # 3. Model scores
         if_scores = self.iforest.score(X)
         lstm_scores = self.lstm.score(X)
 
-        # 4. Normalize scores (NumPy 2.0 SAFE)
+        # 4. Normalize scores (NumPy 2.0 safe)
         if_range = np.ptp(if_scores) + 1e-8
         lstm_range = np.ptp(lstm_scores) + 1e-8
 
         if_norm = (if_scores - np.min(if_scores)) / if_range
         lstm_norm = (lstm_scores - np.min(lstm_scores)) / lstm_range
 
-        # 5. Ensemble
+        # 5. Ensemble score
         anomaly_score = 0.5 * if_norm + 0.5 * lstm_norm
 
         # 6. Drift detection
-        drift_flags = []
-        for score in anomaly_score:
-            drift_flags.append(self.drift.update(float(score)))
+        drift_flags = [self.drift.update(float(s)) for s in anomaly_score]
 
         # 7. Append results
         df_out = df.copy()

@@ -271,3 +271,8 @@ The server will start at: **[http://localhost:8000](http://localhost:8000)**
     *   **Payload:** `{ query: "...", context: { ... } }`
 
 *Note: The current backend implementation (`server.py`) provides intelligent mock responses for demonstration. Connect it to a real LLM by modifying `chat_endpoint` in `server.py`.*
+
+
+
+
+
