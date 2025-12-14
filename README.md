@@ -17,6 +17,11 @@ The project provides a full pipeline:
 ```
 Raw Logs → Parsing → Normalization → NLP Enrichment → Feature Engineering → Embeddings → ML/Anomaly Detection
 ```
+## Architecture Overview
+
+<p align="center">
+  <img src="docs/arc.svg" alt="ML-UEBA Architecture" width="900"/>
+</p>
 
 ---
 
