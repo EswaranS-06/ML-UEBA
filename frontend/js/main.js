@@ -3,6 +3,8 @@ import { PipelineSection } from './sections/pipeline.js';
 import { OutputSection } from './sections/output.js';
 import { DatabaseSection } from './sections/database.js';
 import { RunSection } from './sections/run.js';
+import { LogsSection } from './sections/logs.js';
+import { AgenticSection } from './sections/agent.js?v=final';
 
 document.addEventListener('DOMContentLoaded', () => {
     initNavigation();
@@ -13,6 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
     new OutputSection();
     new DatabaseSection();
     new RunSection();
+    new LogsSection();
+    new AgenticSection();
 });
 
 /* Navigation Logic */
@@ -30,6 +34,17 @@ function initNavigation() {
             document.getElementById(targetId).classList.add('active');
         });
     });
+
+    // Sidebar Collapse Logic
+    const sidebar = document.querySelector('.sidebar');
+    const header = document.querySelector('.sidebar-header');
+
+    if (header && sidebar) {
+        header.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            document.body.classList.toggle('sidebar-closed'); // Add global state class
+        });
+    }
 }
 
 // Global Logger (exposed for modules)

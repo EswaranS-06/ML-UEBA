@@ -24,22 +24,25 @@
             </div>
             <nav class="sidebar-nav">
                 <button class="nav-item active" data-target="input-panel">
-                    <span class="icon">▶</span> Input
+                    <img src="assets/icons/input_icon.svg" class="icon" alt="Input"> Input
                 </button>
                 <button class="nav-item" data-target="pipeline-panel">
-                    <span class="icon">▶</span> Pipeline
+                    <img src="assets/icons/pipeline_icon.svg" class="icon" alt="Pipeline"> Pipeline
                 </button>
                 <button class="nav-item" data-target="output-panel">
-                    <span class="icon">▶</span> Output
+                    <img src="assets/icons/output_icon.svg" class="icon" alt="Output"> Output
                 </button>
                 <button class="nav-item" data-target="database-panel">
-                    <span class="icon">▶</span> Database
+                    <img src="assets/icons/database_icon.svg" class="icon" alt="Database"> Database
                 </button>
                 <button class="nav-item" data-target="run-panel">
-                    <span class="icon">▶</span> Run / Status
+                    <img src="assets/icons/status_icon.svg" class="icon" alt="Run"> Run / Status
                 </button>
                 <button class="nav-item" data-target="logs-panel">
-                    <span class="icon">▶</span> Logs
+                    <img src="assets/icons/log_icon.svg" class="icon" alt="Logs"> Logs
+                </button>
+                <button class="nav-item" data-target="agent-panel">
+                    <img src="assets/icons/ai_icon.svg" class="icon" alt="AI"> Agentic AI
                 </button>
             </nav>
         </aside>
@@ -398,8 +401,132 @@
                         </div>
                     </div>
                     <div class="actions-right">
-                        <button class="btn btn-secondary btn-sm"
-                            onclick="document.getElementById('log-output').innerHTML=''">Clear Logs</button>
+                        <button id="btn-clear-logs" class="btn btn-secondary btn-sm">Clear Logs</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Agentic AI Panel -->
+            <section id="agent-panel" class="panel">
+                <header class="panel-header">
+                    <h1>Agentic AI Consultant</h1>
+                    <p class="subtitle">Interactive analysis and reasoning engine.</p>
+                </header>
+                <div class="panel-body full-height agent-layout">
+                    <!-- Left: Context Panel -->
+                    <div class="agent-sidebar">
+                        <h3>Agent Context</h3>
+
+                        <div class="context-group">
+                            <label>Mode</label>
+                            <select id="agent-mode" class="form-select full-width">
+                                <option value="analysis">Analysis</option>
+                                <option value="forensics">Forensics</option>
+                            </select>
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <div class="context-group">
+                            <label>Context Sources</label>
+
+                            <label class="agent-toggle-row">
+                                <span class="toggle-label">PostgreSQL (Events)</span>
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="agent-ctx-postgres" checked>
+                                    <span class="slider"></span>
+                                </div>
+                            </label>
+
+                            <label class="agent-toggle-row">
+                                <span class="toggle-label">ML Outputs</span>
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="agent-ctx-ml" checked>
+                                    <span class="slider"></span>
+                                </div>
+                            </label>
+
+                            <label class="agent-toggle-row">
+                                <span class="toggle-label">Feature Columns</span>
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="agent-ctx-features" checked>
+                                    <span class="slider"></span>
+                                </div>
+                            </label>
+
+                            <label class="agent-toggle-row">
+                                <span class="toggle-label">Raw Logs</span>
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="agent-ctx-logs">
+                                    <span class="slider"></span>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <div class="context-group">
+                            <label>Time Range</label>
+                            <select id="agent-time-range" class="form-select full-width">
+                                <option value="24h">Last 24 Hours</option>
+                                <option value="7d">Last 7 Days</option>
+                                <option value="custom">Custom</option>
+                            </select>
+                        </div>
+
+
+                        <div class="context-group">
+                            <label>Entity Focus</label>
+
+                            <!-- Editable User Field -->
+                            <div class="checkbox-with-input">
+                                <input type="checkbox" id="agent-check-user">
+                                <input type="text" id="agent-input-user" placeholder="Username (e.g. admin)">
+                            </div>
+
+                            <!-- Editable IP Field -->
+                            <div class="checkbox-with-input">
+                                <input type="checkbox" id="agent-check-ip" checked>
+                                <input type="text" id="agent-input-ip" value="122.225.109.208" placeholder="IP Address">
+                            </div>
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <button class="btn btn-primary full-width">Apply Context</button>
+                    </div>
+
+                    <!-- Right: Chat Panel -->
+                    <div class="agent-chat-area">
+                        <div class="chat-window" id="agent-chat-window">
+                            <!-- Helper / Welcome Message -->
+                            <div class="message agent">
+                                <div class="msg-avatar">🤖</div>
+                                <div class="msg-content">
+                                    <p>I am analyzing SSH anomalies from the last 24 hours.</p>
+                                    <p>The IP <strong>122.225.109.208</strong> shows:</p>
+                                    <ul>
+                                        <li>5 failed attempts</li>
+                                        <li>High IsolationForest score</li>
+                                        <li>LSTM deviation spike</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Prompts -->
+                        <div class="quick-prompts">
+                            <button class="pill">Why anomalous?</button>
+                            <button class="pill">Top risky users</button>
+                            <button class="pill">Drift summary</button>
+                            <button class="pill">Explain IF score</button>
+                        </div>
+
+                        <!-- Input Area -->
+                        <div class="chat-input-area">
+                            <input type="text" id="agent-input" placeholder="Ask about anomalies, users, IPs...">
+                            <button id="btn-send-agent" class="btn btn-primary">Send</button>
+                        </div>
                     </div>
                 </div>
             </section>

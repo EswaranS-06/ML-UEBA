@@ -233,3 +233,41 @@ ML-UEBA is a complete, modular, offline-capable system for:
 * Running ML anomaly detection
 
 This makes it suitable for security automation, SIEM augmentation, and academic experimentation.
+
+---
+
+# 🌐 Web Interface & Agentic AI API
+
+ML-UEBA includes a modern **Control Plane** with an **Agentic AI Consultant** for interactive threat hunting.
+
+### 1️⃣ Install Web Dependencies
+
+The backend requires **FastAPI** to serve the UI and handle API requests.
+
+```powershell
+uv add fastapi uvicorn
+```
+*(Or `pip install fastapi uvicorn`)*
+
+### 2️⃣ Start the Server
+
+Run the unified backend server (serves both Frontend and API):
+
+```powershell
+python server.py
+# or
+uv run python server.py
+```
+
+The server will start at: **[http://localhost:8000](http://localhost:8000)**
+
+### 3️⃣ Using the Agentic AI
+
+1.  Navigate to the **Agentic AI** panel in the sidebar.
+2.  Select context sources (PostgreSQL, ML Outputs, etc.).
+3.  Type a query (e.g., *"Why is this IP anomalous?"*).
+4.  The request flows to the backend API:
+    *   **Endpoint:** `POST /api/agent/chat`
+    *   **Payload:** `{ query: "...", context: { ... } }`
+
+*Note: The current backend implementation (`server.py`) provides intelligent mock responses for demonstration. Connect it to a real LLM by modifying `chat_endpoint` in `server.py`.*
